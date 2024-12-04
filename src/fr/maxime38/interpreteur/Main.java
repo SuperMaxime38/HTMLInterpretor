@@ -1,8 +1,12 @@
 package fr.maxime38.interpreteur;
 
+import java.util.List;
+
 import fr.maxime38.interpreteur.css.CSSLexer;
+import fr.maxime38.interpreteur.css.CSSParser;
 import fr.maxime38.interpreteur.css.CSSToken;
 import fr.maxime38.interpreteur.css.CSSTokenType;
+import fr.maxime38.interpreteur.css.utils.CSSRule;
 
 public class Main {
 
@@ -23,13 +27,23 @@ public class Main {
 //            e.printStackTrace();
 //        }
 		
-		String css = "body { color: #fff; font-size: 16px; margin: 1.5em; }";
+		String css = "body { color: #fff; font-size: 16px; } /* Commentaire CSS */ .h1{text-color:white}";
         CSSLexer lexer = new CSSLexer(css);
 
         CSSToken token;
         while ((token = lexer.nextToken()).getType() != CSSTokenType.EOF) {
             System.out.println(token);
         }
+//        System.out.println("-----------------------");
+//        lexer = new CSSLexer(css);
+//        CSSParser parser = new CSSParser(lexer);
+//
+//        List<CSSRule> rules = parser.parse();
+//
+//        // Afficher les règles analysées
+//        for (CSSRule rule : rules) {
+//            System.out.println(rule);
+//        }
 	}
 
 }
