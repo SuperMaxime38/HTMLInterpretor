@@ -45,12 +45,12 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node{" +
+        return "Node{\n\t\t" +
                 "tagName='" + tagName + '\'' +
                 ", textContent='" + textContent + '\'' +
                 ", attributes=" + attributes +
-                ", children=" + children +
-                "}\n";
+                ", children=\n\t" + children +
+                "}";
     }
 }
 
