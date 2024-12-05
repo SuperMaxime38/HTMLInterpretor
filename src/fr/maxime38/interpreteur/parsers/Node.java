@@ -22,6 +22,10 @@ public class Node {
         child.setParent(this);
         this.children.add(child);
     }
+    
+    public List<Node> getChildren() {
+    	return children;
+    }
 
     public void addAttribute(String name, String value) {
         this.attributes.add(new Attribute(name, value));
@@ -41,6 +45,10 @@ public class Node {
     
     public Node getParent() {
     	return parent;
+    }
+    
+    public String getTagName() {
+    	return tagName;
     }
 
     @Override
