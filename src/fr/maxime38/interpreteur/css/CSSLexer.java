@@ -78,37 +78,40 @@ public class CSSLexer {
     // Consommer un identifiant (noms de sélecteurs, propriétés, etc.)
     private CSSToken consumeIdentifier() {
         int start = position;
-
         char current = input.charAt(position);
 
         // Vérifier si c'est un hash (#)
         if (current == '#') {
             position++; // Consomme le #
-
+            
             // Vérifier si c'est une valeur hexadécimale
             if (position < input.length() && isHexCharacter(input.charAt(position))) {
-                return consumeHexValue(start);
+                return consumeHexValue(start); // Appeler consumeHexValue pour gérer les couleurs hexadécimales
             }
 
-            // Sinon, retourner un jeton HASH
-            return new CSSToken(CSSTokenType.HASH, "#");
+            // Sinon, retourner un token HASH
+            return new CSSToken(CSSTokenType.HASH, input.substring(start, position));
         }
 
-        // Vérifier si c'est un identifiant standard (propriétés, sélecteurs)
-        if (Character.isLetter(current) || current == '.' || current == '-') {
-            while (position < input.length() &&
-                   (Character.isLetterOrDigit(input.charAt(position)) || 
-                    input.charAt(position) == '-' || 
-                    input.charAt(position) == '_')) {
-                position++;
-            }
-            String value = input.substring(start, position);
-            return new CSSToken(CSSTokenType.IDENTIFIER, value);
+        // Vérifier si c'est un identifiant standard (propriétés, sélecteurs, etc.)
+        while (position < input.length() &&
+               (Character.isLetterOrDigit(input.charAt(position)) ||
+                input.charAt(position) == '-' ||
+                input.charAt(position) == '_' ||
+                input.charAt(position) == '.')) {
+            position++;
         }
 
-        // Si aucun identifiant valide, lancer une exception
-        throw new RuntimeException("Erreur : identifiant invalide à la position " + position);
+        // Si aucun caractère n'a été consommé, lancer une exception pour éviter la boucle infinie
+        if (position == start) {
+            throw new RuntimeException("Erreur : identifiant invalide à la position " + position);
+        }
+
+        // Retourner l'identifiant
+        String value = input.substring(start, position);
+        return new CSSToken(CSSTokenType.IDENTIFIER, value);
     }
+
 
     // Méthode pour consommer une valeur hexadécimale
     private CSSToken consumeHexValue(int start) {
@@ -116,9 +119,13 @@ public class CSSLexer {
             position++;
         }
 
+        // Extraire la valeur hexadécimale
         String value = input.substring(start, position);
-        return new CSSToken(CSSTokenType.IDENTIFIER, value); // Utiliser HASH si approprié
+
+        // Retourner un token HASH pour les couleurs hexadécimales
+        return new CSSToken(CSSTokenType.HASH, value);
     }
+
 
     // Vérifier si un caractère est hexadécimal
     private boolean isHexCharacter(char c) {
