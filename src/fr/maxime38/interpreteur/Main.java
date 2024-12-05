@@ -1,9 +1,5 @@
 package fr.maxime38.interpreteur;
 
-import fr.maxime38.interpreteur.css.CSSLexer;
-import fr.maxime38.interpreteur.css.CSSToken;
-import fr.maxime38.interpreteur.css.CSSTokenType;
-
 public class Main {
 
 	public static void main(String[] args) {
@@ -23,14 +19,18 @@ public class Main {
 //            e.printStackTrace();
 //        }
 		
-		    String css = "body { color: #fff; font-size: 16px; } /* Commentaire CSS */ .h1{text-color:white}";
-		    CSSLexer lexer = new CSSLexer(css);
-
-		    CSSToken token;
-		    while ((token = lexer.nextToken()).getType() != CSSTokenType.EOF) {
-		        System.out.println(token);
-		    }
-
+//			String css = """
+//			    body { color: #fff; font-size: 16px; }
+//			    .h1 { text-shadow: 2px 2px red; }
+//			    div { margin: 10px 20px 30px 40px; }
+//			    """;
+//		    CSSLexer lexer = new CSSLexer(css);
+//
+//		    CSSToken token;
+//		    while ((token = lexer.nextToken()).getType() != CSSTokenType.EOF) {
+//		        System.out.println(token);
+//		    }
+//
 //        System.out.println("-----------------------");
 //        lexer = new CSSLexer(css);
 //        CSSParser parser = new CSSParser(lexer);
