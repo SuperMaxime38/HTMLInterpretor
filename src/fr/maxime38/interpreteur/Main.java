@@ -2,9 +2,11 @@ package fr.maxime38.interpreteur;
 
 import java.awt.Color;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -15,6 +17,8 @@ import javax.swing.SwingUtilities;
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.StreamLexer;
 import fr.maxime38.interpreteur.parsers.StreamParser;
+import fr.maxime38.interpreteur.parsers.Token;
+import fr.maxime38.interpreteur.parsers.TokenType;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser;
 import fr.maxime38.interpreteur.renderers.HTMLRenderer;
@@ -25,14 +29,15 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		
-//		try (Reader reader = new FileReader("src/fr/maxime38/interpreteur/test/test.html")) {
-//	        StreamLexer lexer = new StreamLexer(reader);
-//	        Token token;
-//
-//	        while ((token = lexer.nextToken()).getType() != TokenType.EOF) {
-//	            System.out.println(token);
-//	        }
-//	    }
+		try (Reader reader = new FileReader("src/fr/maxime38/interpreteur/test/test.html")) {
+	        StreamLexer lexer = new StreamLexer(reader);
+	        Token token;
+
+	        while ((token = lexer.nextToken()).getType() != TokenType.EOF) {
+	            System.out.println(token);
+	        }
+	    }
+		System.out.println("--------------------------");
 		
 		
 		

@@ -25,6 +25,7 @@ public class StreamParser {
     private Node parseElement() throws IOException{
         if (currentToken.getType() == TokenType.OPENING_TAG) {
             String tagName = currentToken.getValue();
+            System.out.println("(Opening Tag) Looking : "+tagName);
             Node node = new Node(tagName);
 
             // Gérer les attributs si présents
@@ -61,6 +62,17 @@ public class StreamParser {
             }
             currentToken = lexer.nextToken();
             return node;
+        }
+        
+        if(currentToken.getType() == TokenType.RAW_CONTENT) {
+        	System.out.println("found a raw content");
+        	Node node = new Node(currentToken.getValue());
+            if (currentToken.getAttributes() != null) {
+                parseAttributes(node, currentToken.getAttributes());
+            }
+            currentToken = lexer.nextToken();
+            return node;
+        	
         }
 
         throw new RuntimeException("Unexpected token: " + currentToken);

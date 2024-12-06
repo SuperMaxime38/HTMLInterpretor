@@ -8,11 +8,13 @@ public class StreamLexer {
     private BufferedReader reader;
     private int currentChar; // Caractère courant
     private StringBuilder buffer; // Pour accumuler les données si nécessaire
+    private StringBuilder buffer2; // Pour ne pas overwrite le premier
 
     public StreamLexer(Reader input) throws IOException {
         this.reader = new BufferedReader(input);
         this.currentChar = reader.read();
         this.buffer = new StringBuilder();
+        this.buffer2 = new StringBuilder();
     }
 
     public Token nextToken() throws IOException {
@@ -37,7 +39,8 @@ public class StreamLexer {
                 String tagName = readTagName();
                 if (tagName.equals("style") || tagName.equals("script")) {
                     String rawContent = readRawContent(tagName);
-                    Token token = new Token(TokenType.RAW_CONTENT, rawContent);
+                    Token token = new Token(TokenType.RAW_CONTENT, tagName);
+                    token.setAttributes(rawContent);
                     //System.out.println("nextToken(): Generated -> " + token);
                     return token;
                 }
@@ -73,13 +76,13 @@ public class StreamLexer {
     }
 
     private String readTagName() throws IOException {
-        buffer.setLength(0);
+        buffer2.setLength(0);
         while (currentChar != -1 && (Character.isLetterOrDigit(currentChar) || currentChar == '-')) {
-            buffer.append((char) currentChar);
+            buffer2.append((char) currentChar);
             consume();
         }
         //System.out.println("TagName: " + buffer.toString());
-        return buffer.toString();
+        return buffer2.toString();
     }
 
     private String readText() throws IOException {
@@ -131,18 +134,21 @@ public class StreamLexer {
                     if (closingTag.equals(tagName)) {
                         skipWhitespace();
                         expect('>');
-                        break; // Sortir de la boucle une fois la balise fermante trouvée
+                        break; // Sortir une fois la balise fermante trouvée
                     }
                 }
-                buffer.append('<'); // Conserve '<' si ce n'est pas une balise fermante
+                buffer.append('<'); // Si ce n'est pas une balise fermante, conserver '<'
             } else {
-                buffer.append((char) currentChar);
+            	if(((char) currentChar) != ">".toCharArray()[0]) {
+                    buffer.append((char) currentChar);
+            	}
                 consume();
             }
+            //System.out.println(buffer.toString());
         }
-        //System.out.println("RawContent: " + buffer.toString());
         return buffer.toString().trim();
     }
+
 
 
 }
