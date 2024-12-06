@@ -19,32 +19,49 @@ public class StreamLexer {
         skipWhitespace();
 
         if (currentChar == -1) {
+            System.out.println("Token EOF generated");
             return new Token(TokenType.EOF, "");
         }
 
         if (currentChar == '<') {
-            consume(); // Avance dans le flux
+            consume();
             if (currentChar == '/') {
                 consume();
                 String tagName = readTagName();
                 skipWhitespace();
                 expect('>');
-                return new Token(TokenType.CLOSING_TAG, tagName);
+                Token token = new Token(TokenType.CLOSING_TAG, tagName);
+                //System.out.println("nextToken(): Generated -> " + token);
+                return token;
             } else {
                 String tagName = readTagName();
-                return handleOpeningTag(tagName);
+                if (tagName.equals("style") || tagName.equals("script")) {
+                    String rawContent = readRawContent(tagName);
+                    Token token = new Token(TokenType.RAW_CONTENT, rawContent);
+                    //System.out.println("nextToken(): Generated -> " + token);
+                    return token;
+                }
+                Token token = handleOpeningTag(tagName);
+                //System.out.println("nextToken(): Generated -> " + token);
+                return token;
             }
         }
 
-        // Contenu texte ou contenu brut
         if (Character.isLetterOrDigit(currentChar) || currentChar == ' ') {
-            return new Token(TokenType.TEXT, readText());
+            String text = readText();
+            Token token = new Token(TokenType.TEXT, text);
+            //System.out.println("nextToken(): Generated -> " + token);
+            return token;
         }
 
         throw new RuntimeException("Caractère non reconnu : " + (char) currentChar);
     }
 
+
+
     private void consume() throws IOException {
+    	//System.out.println("consume(): Current char -> " + (char) currentChar);
+
         currentChar = reader.read();
     }
 
@@ -61,6 +78,7 @@ public class StreamLexer {
             buffer.append((char) currentChar);
             consume();
         }
+        //System.out.println("TagName: " + buffer.toString());
         return buffer.toString();
     }
 
@@ -82,7 +100,6 @@ public class StreamLexer {
     private Token handleOpeningTag(String tagName) throws IOException {
         buffer.setLength(0);
 
-        // Lire les attributs ou détecter une balise auto-fermante
         while (currentChar != -1 && currentChar != '>' && currentChar != '/') {
             buffer.append((char) currentChar);
             consume();
@@ -94,9 +111,38 @@ public class StreamLexer {
             consume();
         }
 
-        expect('>'); // Fin de balise
-
+        expect('>');
         String value = tagName + (buffer.length() > 0 ? " " + buffer.toString().trim() : "");
-        return new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, value);
+        Token token = new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, value);
+        //System.out.println("handleOpeningTag(): Generated -> " + token);
+        return token;
     }
+
+
+    
+    private String readRawContent(String tagName) throws IOException {
+        buffer.setLength(0);
+        while (currentChar != -1) {
+            if (currentChar == '<') {
+                consume();
+                if (currentChar == '/') {
+                    consume();
+                    String closingTag = readTagName();
+                    if (closingTag.equals(tagName)) {
+                        skipWhitespace();
+                        expect('>');
+                        break; // Sortir de la boucle une fois la balise fermante trouvée
+                    }
+                }
+                buffer.append('<'); // Conserve '<' si ce n'est pas une balise fermante
+            } else {
+                buffer.append((char) currentChar);
+                consume();
+            }
+        }
+        //System.out.println("RawContent: " + buffer.toString());
+        return buffer.toString().trim();
+    }
+
+
 }
