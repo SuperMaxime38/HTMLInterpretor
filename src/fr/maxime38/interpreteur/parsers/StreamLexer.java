@@ -3,7 +3,6 @@ package fr.maxime38.interpreteur.parsers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 
 public class StreamLexer {
     private BufferedReader reader;
@@ -41,10 +40,15 @@ public class StreamLexer {
                 if (tagName.equals("style") || tagName.equals("script")) {
                     String rawContent = readRawContent(tagName);
                     Token token = new Token(TokenType.RAW_CONTENT, tagName);
-                    token.setAttributes(Arrays.asList(rawContent));
+                    if(tagName.equals("style")) token.addAttribute("style", rawContent);
+                    if(tagName.equals("script")) token.addAttribute("script", rawContent);
                     //System.out.println("nextToken(): Generated -> " + token);
                     return token;
                 }
+                
+                //Si ya des attributs dans le tagName
+                
+                
                 Token token = handleOpeningTag(tagName);
                 //System.out.println("nextToken(): Generated -> " + token);
                 return token;
@@ -60,7 +64,6 @@ public class StreamLexer {
 
         throw new RuntimeException("Caractère non reconnu : " + (char) currentChar);
     }
-
 
 
     private void consume() throws IOException {
@@ -82,7 +85,7 @@ public class StreamLexer {
             buffer2.append((char) currentChar);
             consume();
         }
-        //System.out.println("TagName: " + buffer.toString());
+        System.out.println("TagName: " + buffer2.toString());
         return buffer2.toString();
     }
 
@@ -102,6 +105,7 @@ public class StreamLexer {
     }
 
     private Token handleOpeningTag(String tagName) throws IOException {
+    	
         buffer.setLength(0);
 
         while (currentChar != -1 && currentChar != '>' && currentChar != '/') {
@@ -116,8 +120,22 @@ public class StreamLexer {
         }
 
         expect('>');
-        String value = tagName + (buffer.length() > 0 ? " " + buffer.toString().trim() : "");
-        Token token = new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, value);
+        System.out.println("BUFFER: " + buffer.toString());
+        Token token = new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, tagName);
+        
+        // TO HANDLE THE ATTRIBITE DO SOMETHING COMPLICATED
+        
+        String attr = (buffer.length() > 0 ? " " + buffer.toString().trim() : "");
+        
+        String[] attrVal = attr.split("\"");
+        
+        byte counter=0;
+    	for(int i = 0; i < (attrVal.length-3); i+=1) {
+    		token.addAttribute(attrVal[i+counter].split("=")[0], attrVal[(i+1)+counter]);
+    		counter++;
+    	}
+        
+        
         //System.out.println("handleOpeningTag(): Generated -> " + token);
         return token;
     }

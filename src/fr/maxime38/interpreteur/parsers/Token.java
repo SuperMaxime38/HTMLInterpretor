@@ -1,16 +1,16 @@
 package fr.maxime38.interpreteur.parsers;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class Token {
 	private TokenType type;
     private String value;
-    private List<String> attributes;
+    private HashMap<String, String> attributes;
 
     public Token(TokenType type, String value) {
         this.type = type;
         this.value = value;
-        this.attributes = null;
+        this.attributes = new HashMap<String, String>();
     }
 
     public TokenType getType() {
@@ -21,16 +21,16 @@ public class Token {
         return value;
     }
     
-    public List<String> getAttributes() {
+    public HashMap<String, String> getAttributes() {
     	return attributes;
     }
     
-    public void setAttributes(List<String> attributes) {
+    public void setAttributes(HashMap<String, String> attributes) {
     	this.attributes = attributes;
     }
     
-    public void addAttribute(String attribute) {
-    	this.attributes.add(attribute);
+    public void addAttribute(String attribute, String value) {
+    	this.attributes.put(attribute, value);
     }
     
     public void removeAttribute(String attribute) {

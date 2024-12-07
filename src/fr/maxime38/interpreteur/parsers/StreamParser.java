@@ -1,7 +1,7 @@
 package fr.maxime38.interpreteur.parsers;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 public class StreamParser {
     private StreamLexer lexer;
@@ -88,12 +88,19 @@ public class StreamParser {
 
 
 
-    private void parseAttributes(Node node, List<String> attributes) {
+    private void parseAttributes(Node node, Map<String, String> attributes) {
+    	System.out.println("CALLED");
         if(node.getTagName() == "style") {
-        	node.addAttribute("style", attributes.get(0));
+        	System.out.println("STYLE BALISE");
+        	for(String key : attributes.keySet()) {
+        		node.addAttribute(key, attributes.get(key));
+        		System.out.println("Attribute: " + attributes.get(key));
+        	}
         }
         if(node.getTagName() == "script") {
-        	node.addAttribute("script", attributes.get(0));
+        	for(String key : attributes.keySet()) {
+        		node.addAttribute(key, attributes.get(key));
+        	}
         }
     }
 }

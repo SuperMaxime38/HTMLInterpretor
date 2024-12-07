@@ -72,6 +72,7 @@ public class Main {
 	    for (String style : styles) {
 	        combinedStyles.append(style).append("\n");
 	    }
+	    System.out.println("Styles---->" + combinedStyles);
 
 	    CSSLexer cssLexer = new CSSLexer(combinedStyles.toString());
 	    CSSParser cssParser = new CSSParser(cssLexer);

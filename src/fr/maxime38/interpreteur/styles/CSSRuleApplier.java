@@ -21,6 +21,7 @@ public class CSSRuleApplier {
         for (CSSRule rule : cssRules) {
             if (rule.getSelector().equals(tagName)) {
                 for (var declaration : rule.getDeclarations()) {
+                	System.out.println("DECLARATION:" + declaration);
                     switch (declaration.getProperty()) {
                         case "color" -> component.setForeground(Color.decode(declaration.getValue()));
                         case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));

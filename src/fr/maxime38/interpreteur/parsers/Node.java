@@ -6,7 +6,7 @@ import java.util.List;
 public class Node {
     private String tagName;
     private String textContent;
-    private List<Attribute> attributes;
+    private List<NodeAttribute> attributes;
     private List<Node> children;
     private Node parent;
 
@@ -28,10 +28,14 @@ public class Node {
     }
 
     public void addAttribute(String name, String value) {
-        this.attributes.add(new Attribute(name, value));
+        this.attributes.add(new NodeAttribute(name, value));
     }
     
-    public void setAttributes(List<Attribute> attributes) {
+    public List<NodeAttribute> getAttributes() {
+    	return attributes;
+    }
+    
+    public void setAttributes(List<NodeAttribute> attributes) {
     	this.attributes = attributes;
     }
 
@@ -63,20 +67,5 @@ public class Node {
                 ", attributes=" + attributes +
                 ", children=\n\t" + children +
                 "}";
-    }
-}
-
-class Attribute {
-    private String name;
-    private String value;
-
-    public Attribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return name + "=\"" + value + "\"";
     }
 }
