@@ -1,6 +1,7 @@
 package fr.maxime38.interpreteur.parsers;
 
 import java.io.IOException;
+import java.util.List;
 
 public class StreamParser {
     private StreamLexer lexer;
@@ -39,17 +40,23 @@ public class StreamParser {
             // Gérer les enfants jusqu'à la balise fermante correspondante
             while (currentToken.getType() != TokenType.CLOSING_TAG || !currentToken.getValue().equals(tagName)) {
                 if (currentToken.getType() == TokenType.TEXT) {
+                	System.out.println("TEXTCONTENT : " + node.getTextContent() + " token value :" + currentToken.getValue().trim());
                     node.setTextContent((node.getTextContent() + " " + currentToken.getValue()).trim());
+                    return node;
                 } else if (currentToken.getType() == TokenType.OPENING_TAG) {
                     node.addChild(parseElement());
                 } else if (currentToken.getType() == TokenType.SELF_CLOSING_TAG) {
                     node.addChild(parseElement());
+                } else if(currentToken.getType() == TokenType.RAW_CONTENT) {
+                    node.addChild(parseElement());
+                	
                 } else if (currentToken.getType() == TokenType.EOF) {
                     break;
                 }
                 currentToken = lexer.nextToken(); // Avancer dans les tokens
             }
 
+            System.out.println("(Closing Tag) --> " + currentToken.toString());
             // Passer au prochain token après la balise fermante
             currentToken = lexer.nextToken();
             return node;
@@ -65,9 +72,9 @@ public class StreamParser {
         }
         
         if(currentToken.getType() == TokenType.RAW_CONTENT) {
-        	System.out.println("found a raw content");
         	Node node = new Node(currentToken.getValue());
             if (currentToken.getAttributes() != null) {
+            	System.out.println("ATTRIBUTS : "+currentToken.getAttributes());
                 parseAttributes(node, currentToken.getAttributes());
             }
             currentToken = lexer.nextToken();
@@ -81,15 +88,12 @@ public class StreamParser {
 
 
 
-    private void parseAttributes(Node node, String attributesText) {
-        String[] parts = attributesText.split("\\s+");
-        for (String part : parts) {
-            if (part.contains("=")) {
-                String[] keyValue = part.split("=", 2);
-                String key = keyValue[0];
-                String value = keyValue[1].replaceAll("\"", ""); // Retirer les guillemets
-                node.addAttribute(key, value);
-            }
+    private void parseAttributes(Node node, List<String> attributes) {
+        if(node.getTagName() == "style") {
+        	node.addAttribute("style", attributes.get(0));
+        }
+        if(node.getTagName() == "script") {
+        	node.addAttribute("script", attributes.get(0));
         }
     }
 }

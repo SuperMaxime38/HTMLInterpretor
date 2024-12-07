@@ -30,6 +30,10 @@ public class Node {
     public void addAttribute(String name, String value) {
         this.attributes.add(new Attribute(name, value));
     }
+    
+    public void setAttributes(List<Attribute> attributes) {
+    	this.attributes = attributes;
+    }
 
     public void setTextContent(String textContent) {
         this.textContent = textContent;

@@ -103,7 +103,7 @@ public class Lexer {
 
         Token token = new Token(TokenType.OPENING_TAG, tagName);
         if (parsedAttributes.length() > 0) {
-            token.setAttributes(parsedAttributes.toString().trim());
+            token.addAttribute(parsedAttributes.toString().trim());
         }
 
         return token;

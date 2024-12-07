@@ -1,9 +1,11 @@
 package fr.maxime38.interpreteur.parsers;
 
+import java.util.List;
+
 public class Token {
 	private TokenType type;
     private String value;
-    private String attributes;
+    private List<String> attributes;
 
     public Token(TokenType type, String value) {
         this.type = type;
@@ -19,16 +21,24 @@ public class Token {
         return value;
     }
     
-    public String getAttributes() {
+    public List<String> getAttributes() {
     	return attributes;
     }
     
-    public void setAttributes(String attributes) {
+    public void setAttributes(List<String> attributes) {
     	this.attributes = attributes;
+    }
+    
+    public void addAttribute(String attribute) {
+    	this.attributes.add(attribute);
+    }
+    
+    public void removeAttribute(String attribute) {
+    	this.attributes.remove(attribute);
     }
 
     @Override
     public String toString() {
-        return "Token{" + "type=" + type + ", value='" + value + '\'' + /*"attribute=" + attributes+ */'}';
+        return "Token{" + "type=" + type + ", value='" + value + '\'' + "attribute=" + attributes+ '}';
     }
 }

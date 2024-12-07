@@ -1,5 +1,7 @@
 package fr.maxime38.interpreteur.parsers;
 
+import java.util.List;
+
 public class Parser {
     private Lexer lexer;
     private Token currentToken;
@@ -67,15 +69,12 @@ public class Parser {
 
 
 
-    private void parseAttributes(Node node, String attributesText) {
-        String[] parts = attributesText.split("\\s+");
-        for (String part : parts) {
-            if (part.contains("=")) {
-                String[] keyValue = part.split("=", 2);
-                String key = keyValue[0];
-                String value = keyValue[1].replaceAll("\"", ""); // Retirer les guillemets
-                node.addAttribute(key, value);
-            }
+    private void parseAttributes(Node node, List<String> attributes) {
+        if(node.getTagName() == "style") {
+        	node.addAttribute("style", attributes.get(0));
+        }
+        if(node.getTagName() == "script") {
+        	node.addAttribute("script", attributes.get(0));
         }
     }
 }

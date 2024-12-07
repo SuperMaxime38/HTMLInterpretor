@@ -3,6 +3,7 @@ package fr.maxime38.interpreteur.parsers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 public class StreamLexer {
     private BufferedReader reader;
@@ -40,7 +41,7 @@ public class StreamLexer {
                 if (tagName.equals("style") || tagName.equals("script")) {
                     String rawContent = readRawContent(tagName);
                     Token token = new Token(TokenType.RAW_CONTENT, tagName);
-                    token.setAttributes(rawContent);
+                    token.setAttributes(Arrays.asList(rawContent));
                     //System.out.println("nextToken(): Generated -> " + token);
                     return token;
                 }
