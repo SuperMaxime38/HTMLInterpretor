@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.maxime38.interpreteur.parsers.Node;
+import fr.maxime38.interpreteur.parsers.NodeAttribute;
 
 public class DOMUtils {
     public static List<String> extractStyles(Node dom) {
@@ -12,9 +13,24 @@ public class DOMUtils {
         return styles;
     }
 
-    private static void traverseDOM(Node node, List<String> styles) {
+	private static void traverseDOM(Node node, List<String> styles) {
+    	
+    	System.out.println(node.simplifiedString());
+    	
+    	//PLACEHOLDER (ne sert à rien)
         if (node.getTagName().equals("style")) {
+        	System.out.println("It's a style balise");
             styles.add(node.getTextContent()); // Ajouter le contenu du nœud <style>
+        }
+        
+        if(node.hasAttributes()) {
+        	System.out.println("it has attributes");
+        	for(NodeAttribute attribute : node.getAttributes()) {
+        		if(attribute.getName().equals("style")) {
+        			styles.add(attribute.getValue());
+        			System.out.println("Value of attribute: " + attribute.getValue());
+        		}
+        	}
         }
 
         for (Node child : node.getChildren()) {

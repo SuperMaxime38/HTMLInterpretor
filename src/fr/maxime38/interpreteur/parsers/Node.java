@@ -58,6 +58,15 @@ public class Node {
     public String getTagName() {
     	return tagName;
     }
+    
+    /**
+     * Tell if a node has attributes<br>
+     *       @return boolean: True if the node contains any Attribute, False otherwise
+     */
+    public boolean hasAttributes() {
+    	
+    	return attributes.size() > 0;
+    }
 
     @Override
     public String toString() {
@@ -66,6 +75,14 @@ public class Node {
                 ", textContent='" + textContent + '\'' +
                 ", attributes=" + attributes +
                 ", children=\n\t" + children +
+                "}";
+    }
+    
+    public String simplifiedString() {
+    	return "Node{\n\t\t" +
+                "tagName='" + tagName + '\'' +
+                ", textContent='" + textContent + '\'' +
+                ", attributes=" + attributes +
                 "}";
     }
 }

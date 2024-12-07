@@ -85,7 +85,6 @@ public class StreamLexer {
             buffer2.append((char) currentChar);
             consume();
         }
-        System.out.println("TagName: " + buffer2.toString());
         return buffer2.toString();
     }
 
@@ -120,7 +119,6 @@ public class StreamLexer {
         }
 
         expect('>');
-        System.out.println("BUFFER: " + buffer.toString());
         Token token = new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, tagName);
         
         // TO HANDLE THE ATTRIBITE DO SOMETHING COMPLICATED

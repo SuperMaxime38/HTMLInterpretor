@@ -40,7 +40,6 @@ public class StreamParser {
             // Gérer les enfants jusqu'à la balise fermante correspondante
             while (currentToken.getType() != TokenType.CLOSING_TAG || !currentToken.getValue().equals(tagName)) {
                 if (currentToken.getType() == TokenType.TEXT) {
-                	System.out.println("TEXTCONTENT : " + node.getTextContent() + " token value :" + currentToken.getValue().trim());
                     node.setTextContent((node.getTextContent() + " " + currentToken.getValue()).trim());
                     return node;
                 } else if (currentToken.getType() == TokenType.OPENING_TAG) {
@@ -55,8 +54,6 @@ public class StreamParser {
                 }
                 currentToken = lexer.nextToken(); // Avancer dans les tokens
             }
-
-            System.out.println("(Closing Tag) --> " + currentToken.toString());
             // Passer au prochain token après la balise fermante
             currentToken = lexer.nextToken();
             return node;
@@ -89,18 +86,23 @@ public class StreamParser {
 
 
     private void parseAttributes(Node node, Map<String, String> attributes) {
-    	System.out.println("CALLED");
-        if(node.getTagName() == "style") {
-        	System.out.println("STYLE BALISE");
-        	for(String key : attributes.keySet()) {
-        		node.addAttribute(key, attributes.get(key));
-        		System.out.println("Attribute: " + attributes.get(key));
-        	}
-        }
-        if(node.getTagName() == "script") {
-        	for(String key : attributes.keySet()) {
-        		node.addAttribute(key, attributes.get(key));
-        	}
-        }
+    	
+    	for(String key: attributes.keySet()) {
+    		node.addAttribute(key, attributes.get(key));
+    	}
+    	
+//    	System.out.println("CALLED");
+//        if(node.getTagName().equals("style")) {
+//        	System.out.println("STYLE BALISE");
+//        	for(String key : attributes.keySet()) {
+//        		node.addAttribute(key, attributes.get(key));
+//        		System.out.println("Attribute: " + attributes.get(key));
+//        	}
+//        }
+//        if(node.getTagName().equals("script")) {
+//        	for(String key : attributes.keySet()) {
+//        		node.addAttribute(key, attributes.get(key));
+//        	}
+//        }
     }
 }
