@@ -9,25 +9,32 @@ import fr.maxime38.interpreteur.parsers.NodeAttribute;
 public class DOMUtils {
     public static List<String> extractStyles(Node dom) {
         List<String> styles = new ArrayList<>();
-        traverseDOM(dom, styles);
+        traverseDOM(dom, "");
         return styles;
     }
 
-	private static void traverseDOM(Node node, List<String> styles) {
+	public static void traverseDOM(Node node, String styles) {
     	
     	System.out.println(node.simplifiedString());
     	
     	//PLACEHOLDER (ne sert à rien)
         if (node.getTagName().equals("style")) {
         	System.out.println("It's a style balise");
-            styles.add(node.getTextContent()); // Ajouter le contenu du nœud <style>
+            //styles.add(node.getTextContent()); // Ajouter le contenu du nœud <style>
+        }
+        if(!styles.equals("")) {
+        	node.addParentStyle(styles);
+        }
+        
+        if(!node.getStyle().equals("")) {
+        	styles+=node.getStyle();
         }
         
         if(node.hasAttributes()) {
         	System.out.println("it has attributes");
         	for(NodeAttribute attribute : node.getAttributes()) {
         		if(attribute.getName().equals("style")) {
-        			styles.add(attribute.getValue());
+        			styles+=attribute.getValue();
         			System.out.println("Value of attribute: " + attribute.getValue());
         		}
         	}

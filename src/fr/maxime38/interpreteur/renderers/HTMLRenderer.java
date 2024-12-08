@@ -16,11 +16,15 @@ import fr.maxime38.interpreteur.styles.CSSRuleApplier;
 public class HTMLRenderer {
 	
 	private static List<String> containers = Arrays.asList("document", "html", "body", "head", "div");
+	private static CSSRuleApplier styleApplier;
+	private static Node dom;
 	
-	public static JPanel render(Node dom, CSSRuleApplier styleApplier) {
+	public static JPanel render(Node dom) {
+		HTMLRenderer.dom = dom;
+		styleApplier = new CSSRuleApplier();
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Affichage vertical
-	    traverseDOM(dom, panel, styleApplier);
+	    traverseDOM(dom, panel/*, styleApplier*/);
 	    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajoutez des marges
 	    
 	    //Provisoir
@@ -31,22 +35,25 @@ public class HTMLRenderer {
 	}
 
 
-    private static void traverseDOM(Node node, JComponent parent, CSSRuleApplier styleApplier) {
+    private static void traverseDOM(Node node, JComponent parent/*, CSSRuleApplier styleApplier*/) {
         System.out.println("Processing node: " + node.getTagName());
-
+        
         
         
         if (containers.contains(node.getTagName())) {
             for (Node child : node.getChildren()) {
-                traverseDOM(child, parent, styleApplier);
+                traverseDOM(child, parent/*, styleApplier*/);
             }
+        } else if(node.getTagName().equals("style")) {
+        	dom.setStyle(node.getStyle());
         } else if (node.getTagName().equals("h1")) {
             JLabel label = new JLabel(node.getTextContent());
-            styleApplier.applyStyles(label, "h1");
+            styleApplier.applyStyles(node, label);
             parent.add(label);
         } else if (node.getTagName().equals("p")) {
+        	System.out.println("his style:" + node.getStyle());
             JLabel label = new JLabel(node.getTextContent());
-            styleApplier.applyStyles(label, "p");
+            styleApplier.applyStyles(node, label);
             parent.add(label);
         } else {
             System.out.println("Unhandled tag: " + node.getTagName());

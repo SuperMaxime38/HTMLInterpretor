@@ -8,34 +8,81 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import fr.maxime38.interpreteur.parsers.Node;
+import fr.maxime38.interpreteur.parsers.css.CSSLexer;
+import fr.maxime38.interpreteur.parsers.css.CSSParser;
 import fr.maxime38.interpreteur.parsers.css.utils.CSSRule;
 
 public class CSSRuleApplier {
-    private List<CSSRule> cssRules;
+//    private List<CSSRule> cssRules;
+//
+//    public CSSRuleApplier(List<CSSRule> cssRules) {
+//        this.cssRules = cssRules;
+//    }
 
-    public CSSRuleApplier(List<CSSRule> cssRules) {
-        this.cssRules = cssRules;
+//    public void applyStyles(JComponent component, String tagName) {
+//        for (CSSRule rule : cssRules) {
+//            if (rule.getSelector().equals(tagName)) {
+//                for (var declaration : rule.getDeclarations()) {
+//                	System.out.println("DECLARATION:" + declaration);
+//                    switch (declaration.getProperty()) {
+//                        case "color" -> component.setForeground(Color.decode(declaration.getValue()));
+//                        case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));
+//                        case "text-align" -> {
+//                            if (component instanceof JLabel label) {
+//                                if (declaration.getValue().equals("center")) {
+//                                    label.setHorizontalAlignment(SwingConstants.CENTER);
+//                                }
+//                            }
+//                        }
+//                        // Ajoutez d'autres styles...
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    public void applyStyles(Node node, JComponent component) {
+    	
+    	
+    	//Apply parent style
+    	
+    	String parentStyles = node.getParentStyle();
+    	CSSLexer parentLexer = new CSSLexer(parentStyles);
+    	CSSParser parentParser = new CSSParser(parentLexer);
+    	var parentCssRules = parentParser.parse();
+    	
+    	apply(component, parentCssRules);
+    	
+    	
+    	//Then own style
+    	
+    	String styles = node.getStyle();
+    	System.out.println("styles : " + styles);
+    	CSSLexer lexer = new CSSLexer(styles);
+    	CSSParser parser = new CSSParser(lexer);
+    	var cssRules = parser.parse();
+    	
+    	apply(component, cssRules);
     }
-
-    public void applyStyles(JComponent component, String tagName) {
-        for (CSSRule rule : cssRules) {
-            if (rule.getSelector().equals(tagName)) {
-                for (var declaration : rule.getDeclarations()) {
-                	System.out.println("DECLARATION:" + declaration);
-                    switch (declaration.getProperty()) {
-                        case "color" -> component.setForeground(Color.decode(declaration.getValue()));
-                        case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));
-                        case "text-align" -> {
-                            if (component instanceof JLabel label) {
-                                if (declaration.getValue().equals("center")) {
-                                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                                }
-                            }
-                        }
-                        // Ajoutez d'autres styles...
-                    }
-                }
-            }
-        }
+    
+    private void apply(JComponent component, List<CSSRule> cssRules) {
+    	//System.out.println("rules:" + cssRules.toString());
+    	for(CSSRule rule : cssRules) {
+    		for(var declaration : rule.getDeclarations()) {
+    			switch(declaration.getProperty()) {
+    				case "color" -> component.setForeground(Color.decode(declaration.getValue()));
+    				case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));
+    				case "text-align" -> {
+    					if (component instanceof JLabel label) {
+    						if (declaration.getValue().equals("center")) {
+    							label.setHorizontalAlignment(SwingConstants.CENTER);
+    						}
+    					}
+    				}
+    				// Ajoutez d'autres styles...
+    			}
+    		}
+    	}
     }
 }

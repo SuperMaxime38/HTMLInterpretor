@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,10 +18,7 @@ import fr.maxime38.interpreteur.parsers.StreamLexer;
 import fr.maxime38.interpreteur.parsers.StreamParser;
 import fr.maxime38.interpreteur.parsers.Token;
 import fr.maxime38.interpreteur.parsers.TokenType;
-import fr.maxime38.interpreteur.parsers.css.CSSLexer;
-import fr.maxime38.interpreteur.parsers.css.CSSParser;
 import fr.maxime38.interpreteur.renderers.HTMLRenderer;
-import fr.maxime38.interpreteur.styles.CSSRuleApplier;
 import fr.maxime38.interpreteur.utils.DOMUtils;
 
 public class Main {
@@ -67,20 +63,9 @@ public class Main {
 	    // Debug: Affichez le DOM pour confirmer qu'il est correct
 	    System.out.println(dom);
 
-	    List<String> styles = DOMUtils.extractStyles(dom);
-	    StringBuilder combinedStyles = new StringBuilder();
-	    for (String style : styles) {
-	        combinedStyles.append(style).append("\n");
-	    }
-	    System.out.println("Styles---->" + combinedStyles);
+	    DOMUtils.traverseDOM(dom, "");
 
-	    CSSLexer cssLexer = new CSSLexer(combinedStyles.toString());
-	    CSSParser cssParser = new CSSParser(cssLexer);
-	    var cssRules = cssParser.parse();
-
-	    CSSRuleApplier styleApplier = new CSSRuleApplier(cssRules);
-
-	    JPanel panel = HTMLRenderer.render(dom, styleApplier);
+	    JPanel panel = HTMLRenderer.render(dom);
 	    panel.setBackground(Color.LIGHT_GRAY); // Fond temporaire pour tester
 	    return panel;
 	}

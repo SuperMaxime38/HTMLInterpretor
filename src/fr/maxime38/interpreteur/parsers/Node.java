@@ -8,6 +8,8 @@ public class Node {
     private String textContent;
     private List<NodeAttribute> attributes;
     private List<Node> children;
+    private String style;
+    private String parentStyle;
     private Node parent;
 
     public Node(String tagName) {
@@ -16,6 +18,8 @@ public class Node {
         this.attributes = new ArrayList<>();
         this.children = new ArrayList<>();
         this.parent = null;
+        this.style = "";
+        this.parentStyle = "";
     }
 
     public void addChild(Node child) {
@@ -33,6 +37,22 @@ public class Node {
     
     public List<NodeAttribute> getAttributes() {
     	return attributes;
+    }
+    
+    public void setStyle(String style) {
+    	this.style = style;
+    }
+    
+    public String getStyle() {
+    	return style;
+    }
+    
+    public void addParentStyle(String style) {
+    	this.parentStyle+=style;
+    }
+    
+    public String getParentStyle() {
+    	return parentStyle;
     }
     
     public void setAttributes(List<NodeAttribute> attributes) {

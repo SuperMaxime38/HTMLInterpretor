@@ -88,7 +88,13 @@ public class StreamParser {
     private void parseAttributes(Node node, Map<String, String> attributes) {
     	
     	for(String key: attributes.keySet()) {
-    		node.addAttribute(key, attributes.get(key));
+    		if(key.equals("style") || key.equals(" style")) {
+    			node.setStyle(attributes.get(key));
+    			System.out.println("PARSING ATTRIBUTE STYLE -------->" + node.getStyle());
+    		} else {
+    			node.addAttribute(key, attributes.get(key));
+    		}
+    		
     	}
     	
 //    	System.out.println("CALLED");

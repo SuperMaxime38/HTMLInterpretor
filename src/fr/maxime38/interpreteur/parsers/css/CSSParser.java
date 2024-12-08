@@ -38,7 +38,7 @@ public class CSSParser {
     private CSSRule parseRule() {
 
         String selector = parseSelector();  // Analyser le sélecteur CSS
-        consumeToken(CSSTokenType.OPEN_BRACE);  // Consommer le '{'
+        //consumeToken(CSSTokenType.OPEN_BRACE);  // Consommer le '{'
 
         List<CSSDeclaration> declarations = parseDeclarations();  // Analyser les déclarations
 
@@ -66,7 +66,7 @@ public class CSSParser {
 
             // Vérifier si on atteint la fin du fichier
             if (currentToken.getType() == CSSTokenType.EOF) {
-                throw new RuntimeException("Erreur : Sélecteur non terminé, attendu '{' mais trouvé EOF");
+                break;
             }
         }
 
@@ -91,7 +91,8 @@ public class CSSParser {
             if (currentToken.getType() == CSSTokenType.SEMICOLON) {
                 consumeToken(CSSTokenType.SEMICOLON);  // Consommer ';'
             } else if (currentToken.getType() != CSSTokenType.CLOSE_BRACE) {
-                throw new RuntimeException("Erreur : Attendu SEMICOLON ou CLOSE_BRACE mais trouvé " + currentToken.getType());
+                //throw new RuntimeException("Erreur : Attendu SEMICOLON ou CLOSE_BRACE mais trouvé " + currentToken.getType());
+            	break;
             }
 
             declarations.add(new CSSDeclaration(property, value));
@@ -104,7 +105,7 @@ public class CSSParser {
     // Parser une propriété CSS (par exemple, "color")
     private String parseProperty() {
         if (currentToken.getType() != CSSTokenType.IDENTIFIER) {
-            throw new RuntimeException("Erreur : Propriété attendue mais trouvé " + currentToken.getType());
+            //throw new RuntimeException("Erreur : Propriété attendue mais trouvé " + currentToken.getType());
         }
 
         String property = currentToken.getValue();
@@ -131,7 +132,8 @@ public class CSSParser {
 
             // Vérifier si nous atteignons la fin du fichier
             if (currentToken.getType() == CSSTokenType.EOF) {
-                throw new RuntimeException("Erreur : Valeur CSS non terminée avant EOF");
+                //throw new RuntimeException("Erreur : Valeur CSS non terminée avant EOF");
+            	break;
             }
         }
 
@@ -146,9 +148,8 @@ public class CSSParser {
     // Consommer un jeton spécifique
     private void consumeToken(CSSTokenType expectedType) {
         if (currentToken.getType() != expectedType) {
-            throw new RuntimeException("Erreur : Attendu " + expectedType + " mais trouvé " + currentToken.getType());
+            //throw new RuntimeException("Erreur : Attendu " + expectedType + " mais trouvé " + currentToken.getType());
         }
         currentToken = lexer.nextToken();
     }
 }
-
