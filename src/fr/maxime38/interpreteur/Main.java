@@ -18,6 +18,7 @@ import fr.maxime38.interpreteur.parsers.StreamLexer;
 import fr.maxime38.interpreteur.parsers.StreamParser;
 import fr.maxime38.interpreteur.parsers.Token;
 import fr.maxime38.interpreteur.parsers.TokenType;
+import fr.maxime38.interpreteur.parsers.css.CSSTranslator;
 import fr.maxime38.interpreteur.renderers.HTMLRenderer;
 import fr.maxime38.interpreteur.utils.DOMUtils;
 
@@ -68,6 +69,11 @@ public class Main {
 	    System.out.println(dom);
 
 	    DOMUtils.traverseDOM(dom, "");
+	    
+	    String css = """
+	    		
+	    		 """;
+	    CSSTranslator translator = new CSSTranslator(css, false);
 
 	    JPanel panel = HTMLRenderer.render(dom);
 	    panel.setBackground(Color.LIGHT_GRAY); // Fond temporaire pour tester

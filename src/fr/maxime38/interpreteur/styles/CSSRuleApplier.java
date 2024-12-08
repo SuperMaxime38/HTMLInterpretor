@@ -46,18 +46,18 @@ public class CSSRuleApplier {
     	var parentCssRules = parentParser.parse();
     	
     	//component = apply(component, parentCssRules);
-    	System.out.println("PARENT STYLE: " + parentCssRules);
+    	//System.out.println("PARENT STYLE: " + parentCssRules);
     	
     	//Then own style
     	
     	String styles = node.getStyle();
-    	System.out.println("styles : " + styles);
+    	//System.out.println("styles : " + styles);
     	CSSLexer lexer = new CSSLexer(styles);
     	CSSParser parser = new CSSParser(lexer);
     	var cssRules = parser.parse();
     	
     	//return apply(component, cssRules);
-    	System.out.println("OWN STYLE: " + cssRules);
+    	//System.out.println("OWN STYLE: " + cssRules);
     	
     }
     

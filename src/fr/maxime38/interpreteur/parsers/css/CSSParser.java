@@ -91,8 +91,7 @@ public class CSSParser {
             if (currentToken.getType() == CSSTokenType.SEMICOLON) {
                 consumeToken(CSSTokenType.SEMICOLON);  // Consommer ';'
             } else if (currentToken.getType() != CSSTokenType.CLOSE_BRACE) {
-                //throw new RuntimeException("Erreur : Attendu SEMICOLON ou CLOSE_BRACE mais trouvé " + currentToken.getType());
-            	break;
+                throw new RuntimeException("Erreur : Attendu SEMICOLON ou CLOSE_BRACE mais trouvé " + currentToken.getType());
             }
 
             declarations.add(new CSSDeclaration(property, value));
