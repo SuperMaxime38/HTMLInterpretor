@@ -27,6 +27,10 @@ public class Node {
         this.children.add(child);
     }
     
+    public void setChildren(List<Node> children) {
+    	this.children = children;
+    }
+    
     public List<Node> getChildren() {
     	return children;
     }
@@ -94,6 +98,8 @@ public class Node {
                 "tagName='" + tagName + '\'' +
                 ", textContent='" + textContent + '\'' +
                 ", attributes=" + attributes +
+                ", parentStyles=" + parentStyle +
+                ", styles=" +  style+
                 ", children=\n\t" + children +
                 "}";
     }

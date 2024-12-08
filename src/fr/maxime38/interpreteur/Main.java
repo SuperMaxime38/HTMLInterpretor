@@ -35,7 +35,11 @@ public class Main {
 	    }
 		System.out.println("--------------------------");
 		
-		
+		StreamParser htmlParser = new StreamParser(new StreamLexer(new FileReader("src/fr/maxime38/interpreteur/test/test.html")));
+	    Node dom = htmlParser.parse();
+
+	    // Debug: Affichez le DOM pour confirmer qu'il est correct
+	    System.out.println(dom);
 		
 		SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("HTML Renderer");

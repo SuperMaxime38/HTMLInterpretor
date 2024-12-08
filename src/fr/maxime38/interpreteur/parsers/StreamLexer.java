@@ -128,10 +128,10 @@ public class StreamLexer {
         String[] attrVal = attr.split("\"");
         
         byte counter=0;
-    	for(int i = 0; i < (attrVal.length-3); i+=1) {
-    		token.addAttribute(attrVal[i+counter].split("=")[0], attrVal[(i+1)+counter]);
-    		counter++;
-    	}
+        while(counter<attrVal.length-1) {
+        	token.addAttribute(attrVal[counter].split("=")[0], attrVal[counter+1]);
+        	counter+=2;
+        }
         
         
         //System.out.println("handleOpeningTag(): Generated -> " + token);

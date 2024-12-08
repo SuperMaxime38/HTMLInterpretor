@@ -1,17 +1,10 @@
 package fr.maxime38.interpreteur.styles;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.util.List;
-
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser;
-import fr.maxime38.interpreteur.parsers.css.utils.CSSRule;
 
 public class CSSRuleApplier {
 //    private List<CSSRule> cssRules;
@@ -52,8 +45,8 @@ public class CSSRuleApplier {
     	CSSParser parentParser = new CSSParser(parentLexer);
     	var parentCssRules = parentParser.parse();
     	
-    	apply(component, parentCssRules);
-    	
+    	//component = apply(component, parentCssRules);
+    	System.out.println("PARENT STYLE: " + parentCssRules);
     	
     	//Then own style
     	
@@ -63,26 +56,30 @@ public class CSSRuleApplier {
     	CSSParser parser = new CSSParser(lexer);
     	var cssRules = parser.parse();
     	
-    	apply(component, cssRules);
+    	//return apply(component, cssRules);
+    	System.out.println("OWN STYLE: " + cssRules);
+    	
     }
     
-    private void apply(JComponent component, List<CSSRule> cssRules) {
-    	//System.out.println("rules:" + cssRules.toString());
-    	for(CSSRule rule : cssRules) {
-    		for(var declaration : rule.getDeclarations()) {
-    			switch(declaration.getProperty()) {
-    				case "color" -> component.setForeground(Color.decode(declaration.getValue()));
-    				case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));
-    				case "text-align" -> {
-    					if (component instanceof JLabel label) {
-    						if (declaration.getValue().equals("center")) {
-    							label.setHorizontalAlignment(SwingConstants.CENTER);
-    						}
-    					}
-    				}
-    				// Ajoutez d'autres styles...
-    			}
-    		}
-    	}
-    }
+//    private JComponent apply(JComponent component, List<CSSRule> cssRules) {
+//    	System.out.println("rules:" + cssRules.toString());
+//    	for(CSSRule rule : cssRules) {
+//    		for(var declaration : rule.getDeclarations()) {
+//    			switch(declaration.getProperty()) {
+//    				case "color" -> component.setForeground(Color.decode(declaration.getValue()));
+//    				case "font-family" -> component.setFont(new Font(declaration.getValue(), Font.PLAIN, 14));
+//    				case "text-align" -> {
+//    					if (component instanceof JLabel label) {
+//    						if (declaration.getValue().equals("center")) {
+//    							label.setHorizontalAlignment(SwingConstants.CENTER);
+//    						}
+//    					}
+//    				}
+//    				// Ajoutez d'autres styles...
+//    			}
+//    		}
+//    	}
+//    	
+//    	return component;
+//    }
 }
