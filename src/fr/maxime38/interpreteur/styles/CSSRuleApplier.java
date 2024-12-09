@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
-import fr.maxime38.interpreteur.parsers.css.CSSParser;
+import fr.maxime38.interpreteur.parsers.css.CSSParser2;
 
 public class CSSRuleApplier {
 //    private List<CSSRule> cssRules;
@@ -41,23 +41,29 @@ public class CSSRuleApplier {
     	//Apply parent style
     	
     	String parentStyles = node.getParentStyle();
-    	CSSLexer parentLexer = new CSSLexer(parentStyles);
-    	CSSParser parentParser = new CSSParser(parentLexer);
+    	if(!parentStyles.equals("")) {
+    		CSSLexer parentLexer = new CSSLexer(parentStyles);
+    	CSSParser2 parentParser = new CSSParser2(parentLexer, false);
     	var parentCssRules = parentParser.parse();
     	
     	//component = apply(component, parentCssRules);
     	//System.out.println("PARENT STYLE: " + parentCssRules);
+    	}
+    	
     	
     	//Then own style
     	
     	String styles = node.getStyle();
-    	//System.out.println("styles : " + styles);
+    	if(!styles.equals("")) {
+    		//System.out.println("styles : " + styles);
     	CSSLexer lexer = new CSSLexer(styles);
-    	CSSParser parser = new CSSParser(lexer);
+    	CSSParser2 parser = new CSSParser2(lexer, false);
     	var cssRules = parser.parse();
     	
     	//return apply(component, cssRules);
     	//System.out.println("OWN STYLE: " + cssRules);
+    	}
+    	
     	
     }
     

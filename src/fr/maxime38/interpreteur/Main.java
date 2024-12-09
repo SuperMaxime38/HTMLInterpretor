@@ -76,7 +76,6 @@ public class Main {
 	    CSSTranslator translator = new CSSTranslator(css, false);
 
 	    JPanel panel = HTMLRenderer.render(dom);
-	    panel.setBackground(Color.LIGHT_GRAY); // Fond temporaire pour tester
 	    return panel;
 	}
 

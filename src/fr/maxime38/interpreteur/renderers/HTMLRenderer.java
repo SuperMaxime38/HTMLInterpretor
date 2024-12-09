@@ -38,10 +38,6 @@ public class HTMLRenderer {
 	    traverseDOM(dom, panel/*, styleApplier*/);
 	    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajoutez des marges
 	    
-	    //Provisoir
-	    panel.setBackground(Color.LIGHT_GRAY);
-
-	    
 	    return panel;
 	}
 
@@ -54,25 +50,46 @@ public class HTMLRenderer {
         
         
         if (containers.contains(node.getTagName())) {
+        	lexer = new CSSLexer(node.getStyle());
+            properties = new CSSParser2(lexer, false).parse();
+            applyStyle(parent);
             for (Node child : node.getChildren()) {
+            	child.addParentStyle(node.getStyle());
                 traverseDOM(child, parent/*, styleApplier*/);
             }
         } else if(node.getTagName().equals("style")) {
         	dom.setStyle(node.getStyle());
         } else if (node.getTagName().equals("h1")) {
             JLabel label = new JLabel(node.getTextContent());
-            //label.setForeground(Color.BLUE);
-            styleApplier.applyStyles(node, label);
+            
+            //Application style parent
+            lexer = new CSSLexer(node.getParentStyle());
+            properties = new CSSParser2(lexer, false).parse();
+            applyStyle(label);
+            
+            
+            //Application du CSS du noeud
+            lexer = new CSSLexer(node.getStyle());
+            properties = new CSSParser2(lexer, false).parse();
+            applyStyle(label);
             parent.add(label);
+            System.out.println("color is now:"+label.getForeground());
         } else if (node.getTagName().equals("p")) {
         	//System.out.println("his style:" + node.getStyle());
             JLabel label = new JLabel(node.getTextContent());
             parent.add(label);
+            
+
+            //Application style parent
+            lexer = new CSSLexer(node.getParentStyle());
+            properties = new CSSParser2(lexer, false).parse();
+            applyStyle(label);
 
             //Application du CSS du noeud
             lexer = new CSSLexer(node.getStyle());
             properties = new CSSParser2(lexer, false).parse();
             applyStyle(label);
+
         } else {
             System.out.println("Unhandled tag: " + node.getTagName());
         }
@@ -80,23 +97,121 @@ public class HTMLRenderer {
     
     private static void applyStyle(JComponent component) {
     	if(properties.containsKey("this")) {
+    		System.out.println("JUSQU'ICI TOUT VA BIEN");
     		HashMap<String, String> props = properties.get("this");
     		for(String property : props.keySet()) {
+    			System.out.println("PROPERTTY:"+property);
     			switch(property) {
-    			case "color" -> component.setForeground(Color.decode(props.get(property)));
-    			case "font-family" -> component.setFont(new Font(props.get(property), Font.PLAIN, 14));
-    			case "text-align" -> {
+    			case "color":
+    				System.out.println("color called");
+    				Color c = getColor(props.get(property));
+    				
+    				System.out.println("COLOR:"+c.toString());
+    				
+    				component.setForeground(c);
+    				break;
+    			case "background-color":
+    				System.out.println("bg-col called | component:"+component.toString());
+    				component.setBackground(getColor(props.get(property)));
+    				break;
+    			case "font-family":
+    				component.setFont(new Font(props.get(property), Font.PLAIN, 14));
+    				break;
+    			case "text-align":
     				if (component instanceof JLabel label) {
     					if (props.get(property).equals("center")) {
     						label.setHorizontalAlignment(SwingConstants.CENTER);
-                      }
-                  }
-              }
+    					}
+    				}
+
+    				break;
               // Ajoutez d'autres styles...
     			
     			}
     		}
     	}
+    }
+    
+    public static Color getColor(String color) {
+    	try {
+			return Color.decode(color);
+		} catch(NumberFormatException e) {
+			switch(color) {
+			case "white": return Color.white;
+			case "red": return Color.red;
+			case "blue": return Color.blue;
+			case "green": return Color.green;
+			case "yellow": return Color.yellow;
+			case "purple": return Color.decode("#800080");
+			case "grey": return Color.gray;
+			case "gray": return Color.gray;
+			case "pink": return Color.pink;
+			case "orange": return Color.orange;
+			case "silver": return Color.decode("#C0C0C0");
+			case "maroon": return Color.decode("#800000");
+			case "fuchsia": return Color.decode("#FF00FF");
+			case "lime": return Color.decode("#00FF00");
+			case "olive": return Color.decode("#808000");
+			case "navy": return Color.decode("#000080");
+			case "teal": return Color.decode("#008080");
+			case "aqua": return Color.decode("#00FFFF");
+			
+			case "aliceblue": return Color.decode("#00FFFF");
+			case "antiquewhite": return Color.decode("#00FFFF");
+			case "aquamarine": return Color.decode("#00FFFF");
+			case "azure": return Color.decode("#00FFFF");
+			case "beige": return Color.decode("#00FFFF");
+			case "bisque": return Color.decode("#00FFFF");
+			case "blanchedalmond": return Color.decode("#00FFFF");
+			case "blueviolet": return Color.decode("#00FFFF");
+			case "brown": return Color.decode("#00FFFF");
+			case "burlywood": return Color.decode("#00FFFF");
+			case "cadetblue": return Color.decode("#00FFFF");
+			case "chartreuse": return Color.decode("#00FFFF");
+			case "chocolate": return Color.decode("#00FFFF");
+			case "coral": return Color.decode("#00FFFF");
+			case "cornflowerblue": return Color.decode("#00FFFF");
+			case "cornsilk": return Color.decode("#00FFFF");
+			case "crimson": return Color.decode("#00FFFF");
+			case "cyan": return Color.decode("#00FFFF");
+			case "darkblue": return Color.decode("#00FFFF");
+			case "darkcyan": return Color.decode("#00FFFF");
+			case "darkgoldenrod": return Color.decode("#00FFFF");
+			case "darkgray": return Color.decode("#00FFFF");
+			case "darkgrey": return Color.decode("#00FFFF");
+			case "darkgreen": return Color.decode("#00FFFF");
+			case "darkkhaki": return Color.decode("#00FFFF");
+			case "darkmagenta": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			case "aqua": return Color.decode("#00FFFF");
+			
+			
+			default: return Color.black;
+			}
+		}
     }
 
 }
