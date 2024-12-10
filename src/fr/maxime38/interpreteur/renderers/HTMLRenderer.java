@@ -1,6 +1,8 @@
 package fr.maxime38.interpreteur.renderers;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,115 +35,109 @@ public class HTMLRenderer {
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Affichage vertical
 	    traverseDOM(dom, panel/*, styleApplier*/);
-	    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajoutez des marges
+	    panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Ajoutez des marges
 	    
 	    return panel;
 	}
 
 
-    private static void traverseDOM(Node node, JComponent parent/*, CSSRuleApplier styleApplier*/) {
-        System.out.println("Processing node: " + node.getTagName());
-        
-        //Ajouter un systeme qui apply les style des balises globales ici
-        
-        
-        
-        if (containers.contains(node.getTagName())) {
-        	if(fullscreenStyles.contains(node.getTagName())) {
-        		lexer = new CSSLexer(node.getStyle());
-                properties = new CSSParser2(lexer, false).parse();
-                applyStyle(parent);
-                for (Node child : node.getChildren()) {
-                	child.addParentStyle(node.getStyle());
-                    traverseDOM(child, parent/*, styleApplier*/);
-                }
-        	} else {
-        		lexer = new CSSLexer(node.getStyle());
-            properties = new CSSParser2(lexer, false).parse();
-            JPanel panel = new JPanel();
-            applyStyle(panel);
-            for (Node child : node.getChildren()) {
-            	child.addParentStyle(node.getStyle());
-                traverseDOM(child, panel/*, styleApplier*/);
-            }
-            parent.add(panel);
-        	}
-        	
-        	
-        } else if(node.getTagName().equals("style")) {
-        	dom.setStyle(node.getStyle());
-        } else if (node.getTagName().equals("h1")) {
-            JLabel label = new JLabel(node.getTextContent());
-            
-            //Application style parent
-            lexer = new CSSLexer(node.getParentStyle());
-            properties = new CSSParser2(lexer, false).parse();
-            applyStyle(label);
-            
-            
-            //Application du CSS du noeud
-            lexer = new CSSLexer(node.getStyle());
-            properties = new CSSParser2(lexer, false).parse();
-            applyStyle(label);
-            parent.add(label);
-            System.out.println("color is now:"+label.getForeground());
-        } else if (node.getTagName().equals("p")) {
-        	//System.out.println("his style:" + node.getStyle());
-            JLabel label = new JLabel(node.getTextContent());
-            parent.add(label);
-            
+	private static void traverseDOM(Node node, JComponent parent) {
+		System.out.println("Parcourt: "+node.getTagName());
+	    if (containers.contains(node.getTagName())) {
+	        JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Vertical par défaut
 
-            //Application style parent
-            lexer = new CSSLexer(node.getParentStyle());
-            properties = new CSSParser2(lexer, false).parse();
-            applyStyle(label);
+	        lexer = new CSSLexer(node.getStyle());
+	        properties = new CSSParser2(lexer, false).parse();
+	        applyStyle(panel);
 
-            //Application du CSS du noeud
-            lexer = new CSSLexer(node.getStyle());
-            properties = new CSSParser2(lexer, false).parse();
-            applyStyle(label);
+	        for (Node child : node.getChildren()) {
+	            traverseDOM(child, panel);
+	        }
 
-        } else {
-            System.out.println("Unhandled tag: " + node.getTagName());
-        }
-    }
+	        panel.setSize(panel.getPreferredSize());
+	        panel.revalidate();
+	        panel.repaint();
+	        //System.out.println("panel: "+node.getTagName()+"PANEL SIZE:"+panel.getSize().toString()+ ", PREFERRED:" +panel.getPreferredSize().toString());
+	        parent.add(panel);
+	    } else if (node.getTagName().equals("h1") || node.getTagName().equals("p")) {
+	        JLabel label = new JLabel(node.getTextContent());
+	        parent.add(label);
+
+	        lexer = new CSSLexer(node.getParentStyle());
+	        properties = new CSSParser2(lexer, false).parse();
+	        applyStyle(label);
+
+	        lexer = new CSSLexer(node.getStyle());
+	        properties = new CSSParser2(lexer, false).parse();
+	        applyStyle(label);
+	    } else {
+	        System.out.println("Unhandled tag: " + node.getTagName());
+	    }
+	}
+
+
+
     
     private static void applyStyle(JComponent component) {
-    	if(properties.containsKey("this")) {
-    		System.out.println("JUSQU'ICI TOUT VA BIEN");
-    		HashMap<String, String> props = properties.get("this");
-    		for(String property : props.keySet()) {
-    			System.out.println("PROPERTTY:"+property);
-    			switch(property) {
-    			case "color":
-    				System.out.println("color called");
-    				Color c = getColor(props.get(property));
-    				
-    				System.out.println("COLOR:"+c.toString());
-    				
-    				component.setForeground(c);
-    				break;
-    			case "background-color":
-    				System.out.println("bg-col called | component:"+component.toString());
-    				component.setBackground(getColor(props.get(property)));
-    				break;
-    			case "font-family":
-    				component.setFont(new Font(props.get(property), Font.PLAIN, 14));
-    				break;
-    			case "text-align":
-    				if (component instanceof JLabel label) {
-    					if (props.get(property).equals("center")) {
-    						label.setHorizontalAlignment(SwingConstants.CENTER);
-    					}
-    				}
+        if (properties.containsKey("this")) {
+            HashMap<String, String> props = properties.get("this");
+            for (String property : props.keySet()) {
+                switch (property) {
+                    case "color":
+                        component.setForeground(getColor(props.get(property)));
+                        break;
+                    case "background-color":
+                        component.setBackground(getColor(props.get(property)));
+                        if (component instanceof JPanel panel) {
+                        	panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Disposition verticale
+                        	panel.setOpaque(true); // Assure que la couleur de fond est visible
 
-    				break;
-              // Ajoutez d'autres styles...
-    			
-    			}
-    		}
-    	}
+                        }
+                        break;
+
+                    case "font-family":
+                        component.setFont(new Font(props.get(property), Font.PLAIN, 14));
+                        break;
+                    case "text-align":
+                        if (component instanceof JLabel label) {
+                            if (props.get(property).equals("center")) {
+                                label.setHorizontalAlignment(SwingConstants.CENTER);
+                            }
+                        }
+                        break;
+                    case "display":
+                        if (component instanceof JPanel panel) {
+                            switch (props.get(property)) {
+                                case "inline":
+                                    panel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Affichage horizontal
+                                    break;
+                                default:
+                                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Disposition verticale par défaut
+                                    break;
+                            }
+                        }
+                        break;
+                        
+                    case "width":
+                        int width = Integer.parseInt(props.get(property).replace("px", ""));
+                        component.setPreferredSize(new Dimension(width, component.getPreferredSize().height));
+                        break;
+                    case "height":
+                        int height = Integer.parseInt(props.get(property).replace("px", ""));
+                        component.setPreferredSize(new Dimension(component.getPreferredSize().width, height));
+                        break;
+
+
+
+                    // Ajoutez d'autres styles...
+                }
+            }
+        }
     }
+
+
+
     
     public static Color getColor(String color) {
     	try {

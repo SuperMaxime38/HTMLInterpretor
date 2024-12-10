@@ -105,7 +105,7 @@ public class Node {
     }
     
     public String simplifiedString() {
-    	return "Node{\n\t\t" +
+    	return "Node{" +
                 "tagName='" + tagName + '\'' +
                 ", textContent='" + textContent + '\'' +
                 ", attributes=" + attributes +
