@@ -16,20 +16,17 @@ import javax.swing.SwingConstants;
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser2;
-import fr.maxime38.interpreteur.styles.CSSRuleApplier;
 
 public class HTMLRenderer {
 	
+	private static List<String> fullscreenStyles = Arrays.asList("document", "html", "body");
 	private static List<String> containers = Arrays.asList("document", "html", "body", "head", "div");
-	private static CSSRuleApplier styleApplier;
 	private static Node dom;
 	private static HashMap<String, HashMap<String, String>> properties;
 	private static CSSLexer lexer;
-	private static CSSParser2 parser;
 	
 	public static JPanel render(Node dom) {
 		HTMLRenderer.dom = dom;
-		styleApplier = new CSSRuleApplier();
 		
 		properties = new HashMap<String, HashMap<String, String>>();
 		
@@ -50,13 +47,27 @@ public class HTMLRenderer {
         
         
         if (containers.contains(node.getTagName())) {
-        	lexer = new CSSLexer(node.getStyle());
+        	if(fullscreenStyles.contains(node.getTagName())) {
+        		lexer = new CSSLexer(node.getStyle());
+                properties = new CSSParser2(lexer, false).parse();
+                applyStyle(parent);
+                for (Node child : node.getChildren()) {
+                	child.addParentStyle(node.getStyle());
+                    traverseDOM(child, parent/*, styleApplier*/);
+                }
+        	} else {
+        		lexer = new CSSLexer(node.getStyle());
             properties = new CSSParser2(lexer, false).parse();
-            applyStyle(parent);
+            JPanel panel = new JPanel();
+            applyStyle(panel);
             for (Node child : node.getChildren()) {
             	child.addParentStyle(node.getStyle());
-                traverseDOM(child, parent/*, styleApplier*/);
+                traverseDOM(child, panel/*, styleApplier*/);
             }
+            parent.add(panel);
+        	}
+        	
+        	
         } else if(node.getTagName().equals("style")) {
         	dom.setStyle(node.getStyle());
         } else if (node.getTagName().equals("h1")) {
@@ -137,22 +148,10 @@ public class HTMLRenderer {
 			return Color.decode(color);
 		} catch(NumberFormatException e) {
 			switch(color) {
-			case "white": return Color.white;
-			case "red": return Color.red;
 			case "green": return Color.green;
-			case "yellow": return Color.yellow;
-			case "purple": return Color.decode("#800080");
 			case "grey": return Color.gray;
 			case "gray": return Color.gray;
-			case "pink": return Color.pink;
-			case "orange": return Color.orange;
-			case "silver": return Color.decode("#C0C0C0");
-			case "maroon": return Color.decode("#800000");
 			case "fuchsia": return Color.decode("#FF00FF");
-			case "lime": return Color.decode("#00FF00");
-			case "olive": return Color.decode("#808000");
-			case "navy": return Color.decode("#000080");
-			case "teal": return Color.decode("#008080");
 			
 			case "aliceblue": return Color.decode("#f0f8ff");
 			case "antiquewhite": return Color.decode("#faebd7");
@@ -207,7 +206,6 @@ public class HTMLRenderer {
 			case "goldenrod": return Color.decode("#daa520");
 			case "greenyellow": return Color.decode("#adff2f");
 			case "honeydew": return Color.decode("#f0fff0");
-			
 			case "hotpink": return Color.decode("#ff69b4");
 			case "indianred": return Color.decode("#cd5c5c");
 			case "indigo": return Color.decode("#4b0082");
@@ -232,32 +230,75 @@ public class HTMLRenderer {
 			case "lightslategrey": return Color.decode("#778899");
 			case "lightsteelblue": return Color.decode("#b0c4de");
 			case "lightyellow": return Color.decode("#ffffe0");
+			case "lime": return Color.decode("#00ff00");
+			case "limegreen": return Color.decode("#32cd32");
+			case "linen": return Color.decode("#faf0e6");
+			case "magenta": return Color.decode("#ff00ff");
+			case "maroon": return Color.decode("#800000");
+			case "mediumaquamarine": return Color.decode("#66cdaa");
+			case "mediumblue": return Color.decode("#0000cd");
+			case "mediumorchid": return Color.decode("#ba55d3");
+			case "mediumpurple": return Color.decode("#9370db");
+			case "mediumseagreen": return Color.decode("#3cb371");
+			case "mediumslateblue": return Color.decode("#7b68ee");
+			case "mediumspringgreen": return Color.decode("#00fa9a");
+			case "mediumturquoise": return Color.decode("#48d1cc");
+			case "mediumvioletred": return Color.decode("#c71585");
+			case "midnightblue": return Color.decode("#191970");
+			case "mintcream": return Color.decode("#f5fffa");
+			case "mistyrose": return Color.decode("#ffe4e1");
+			case "moccasin": return Color.decode("#ffe4b5");
+			case "navajowhite": return Color.decode("#ffdead");
+			case "navy": return Color.decode("#000080");
+			case "oldlace": return Color.decode("#fdf5e6");
+			case "olive": return Color.decode("#808000");
+			case "olivedrab": return Color.decode("#6b8e23");
+			case "orange": return Color.decode("#ffa500");
+			case "orangered": return Color.decode("#ff4500");
+			case "orchid": return Color.decode("#da70d6");
+			case "palegoldenrod": return Color.decode("#eee8aa");
+			case "palegreen": return Color.decode("#98fb98");
+			case "paleturquoise": return Color.decode("#afeeee");
+			case "palevioletred": return Color.decode("#db7093");
+			case "papayawhip": return Color.decode("#ffefd5");
+			case "peachpuff": return Color.decode("#ffdab9");
+			case "peru": return Color.decode("#cd853f");
+			case "pink": return Color.decode("#ffc0cb");
+			case "plum": return Color.decode("#dda0dd");
+			case "powderblue": return Color.decode("#b0e0e6");
+			case "purple": return Color.decode("#800080");
+			case "rebeccapurple": return Color.decode("#663399");
+			case "red": return Color.decode("#ff0000");
+			case "rosybrown": return Color.decode("#bc8f8f");
+			case "royalblue": return Color.decode("#4169e1");
+			case "saddlebrown": return Color.decode("#8b4513");
+			case "salmon": return Color.decode("#fa8072");
+			case "sandybrown": return Color.decode("#f4a460");
+			case "seagreen": return Color.decode("#2e8b57");
+			case "seashell": return Color.decode("#fff5ee");
+			case "sienna": return Color.decode("#a0522d");
+			case "silver": return Color.decode("#c0c0c0");
+			case "skyblue": return Color.decode("#87ceeb");
+			case "slateblue": return Color.decode("#6a5acd");
+			case "slategray": return Color.decode("#708090");
+			case "slategrey": return Color.decode("#708090");
+			case "snow": return Color.decode("#fffafa");
+			case "springgreen": return Color.decode("#00ff7f");
+			case "steelblue": return Color.decode("#4682b4");
+			case "tan": return Color.decode("#d2b48c");
+			case "teal": return Color.decode("#008080");
+			case "thistle": return Color.decode("#d8bfd8");
+			case "tomato": return Color.decode("#ff6347");
 			
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
-			case "greenyellow": return Color.decode("#00FFFF");
+			case "transparent": return new Color(0,0,0,0); // Transparent color 
+			
+			case "turquoise": return Color.decode("#40e0d0");
+			case "violet": return Color.decode("#ee82ee");
+			case "wheat": return Color.decode("#f5deb3");
+			case "white": return Color.decode("#ffffff");
+			case "whitesmoke": return Color.decode("#f5f5f5");
+			case "yellow": return Color.decode("#ffff00");
+			case "yellowgreen": return Color.decode("#9acd32");
 			
 			
 			default: return Color.black;

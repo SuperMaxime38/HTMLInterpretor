@@ -1,6 +1,5 @@
 package fr.maxime38.interpreteur;
 
-import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,7 +17,6 @@ import fr.maxime38.interpreteur.parsers.StreamLexer;
 import fr.maxime38.interpreteur.parsers.StreamParser;
 import fr.maxime38.interpreteur.parsers.Token;
 import fr.maxime38.interpreteur.parsers.TokenType;
-import fr.maxime38.interpreteur.parsers.css.CSSTranslator;
 import fr.maxime38.interpreteur.renderers.HTMLRenderer;
 import fr.maxime38.interpreteur.utils.DOMUtils;
 
@@ -70,10 +68,6 @@ public class Main {
 
 	    DOMUtils.traverseDOM(dom, "");
 	    
-	    String css = """
-	    		
-	    		 """;
-	    CSSTranslator translator = new CSSTranslator(css, false);
 
 	    JPanel panel = HTMLRenderer.render(dom);
 	    return panel;
