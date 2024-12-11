@@ -55,7 +55,7 @@ public class HTMLRenderer {
 	            traverseDOM(child, panel);
 	        }
 
-	        panel.setSize(panel.getPreferredSize());
+	        panel.setMaximumSize(new Dimension(panel.getMaximumSize().width, panel.getPreferredSize().height));
 	        panel.revalidate();
 	        panel.repaint();
 	        //System.out.println("panel: "+node.getTagName()+"PANEL SIZE:"+panel.getSize().toString()+ ", PREFERRED:" +panel.getPreferredSize().toString());
