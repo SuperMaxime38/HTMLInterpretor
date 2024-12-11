@@ -16,23 +16,26 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import fr.maxime38.interpreteur.parsers.Node;
+import fr.maxime38.interpreteur.parsers.NodeAttribute;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser2;
+import fr.maxime38.interpreteur.parsers.css.CSSToken;
+import fr.maxime38.interpreteur.parsers.css.CSSTokenType;
 
 public class HTMLRenderer {
 	
 	private static List<String> fullscreenStyles = Arrays.asList("document", "html", "body");
 	private static List<String> containers = Arrays.asList("document", "html", "body", "head", "div");
-	private static Node dom;
 	private static HashMap<String, HashMap<String, String>> properties;
 	private static CSSLexer lexer;
+	private static JPanel root;
 	
 	public static JPanel render(Node dom) {
-		HTMLRenderer.dom = dom;
 		
 		properties = new HashMap<String, HashMap<String, String>>();
 		
 	    JPanel panel = new JPanel();
+	    root = panel;
 	    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Affichage vertical
 	    traverseDOM(dom, panel/*, styleApplier*/);
 	    panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Ajoutez des marges
@@ -48,7 +51,14 @@ public class HTMLRenderer {
 	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Vertical par défaut
 
 	        lexer = new CSSLexer(node.getStyle());
-	        properties = new CSSParser2(lexer, false).parse();
+	        
+	        System.out.println("TEST: " + node.getTagName() + " attributes " + node.getAttributes().toString() + " style : " + node.getStyle());
+	        System.out.println("contains globalCSS : " + containsGlobalCSS(node));
+	        
+	        properties = new CSSParser2(lexer,containsGlobalCSS(node)).parse();
+	        if(fullscreenStyles.contains(node.getTagName())) { //Maybe useless who knows
+	        	applyStyle(parent);
+	        }
 	        applyStyle(panel);
 
 	        for (Node child : node.getChildren()) {
@@ -64,19 +74,25 @@ public class HTMLRenderer {
 	        JLabel label = new JLabel(node.getTextContent());
 	        parent.add(label);
 
-	        lexer = new CSSLexer(node.getParentStyle());
-	        properties = new CSSParser2(lexer, false).parse();
-	        applyStyle(label);
+//	        lexer = new CSSLexer(node.getParentStyle());
+//	        
+//	        properties = new CSSParser2(lexer,containsGlobalCSS(node.getParent())).parse();
+//	        applyStyle(label);
 
 	        lexer = new CSSLexer(node.getStyle());
-	        properties = new CSSParser2(lexer, false).parse();
+	        properties = new CSSParser2(lexer,false).parse();
 	        applyStyle(label);
 	    } else {
 	        System.out.println("Unhandled tag: " + node.getTagName());
 	    }
 	}
-
-
+	
+	private static boolean containsGlobalCSS(Node node) {
+		for(NodeAttribute attribute : node.getAttributes()) {
+			if(attribute.getName().equals("globalCSS")) return true;
+		}
+		return false;
+	}
 
     
     private static void applyStyle(JComponent component) {

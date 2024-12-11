@@ -132,8 +132,6 @@ public class CSSLexer {
         return Character.isDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
     }
 
-
-
     // Consommer un nombre (valeurs numériques)
     private CSSToken consumeNumber() {
         int start = position;

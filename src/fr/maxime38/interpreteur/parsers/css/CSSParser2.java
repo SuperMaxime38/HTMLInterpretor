@@ -6,14 +6,15 @@ public class CSSParser2 {
 	
 	private CSSLexer lexer;
     private CSSToken currentToken;
-    private boolean isGlobal;
     private HashMap<String, String> property;
     private HashMap<String, HashMap<String, String>> properties;
 
-    public CSSParser2(CSSLexer lexer, boolean globalSelection) {
+    private boolean isGlobal;
+    
+    public CSSParser2(CSSLexer lexer, boolean isGlobal) {
+    	this.isGlobal = isGlobal;
         this.lexer = lexer;
         this.currentToken = lexer.nextToken();
-        this.isGlobal = globalSelection;
         this.property = new HashMap<String, String>();
         this.properties = new HashMap<String, HashMap<String, String>>();
     }
@@ -50,7 +51,6 @@ public class CSSParser2 {
     			property.clear();
     			parseRule();
     		}
-    		System.out.println("CURRENT:"+currentToken.toString());
     		
     	}
     }
@@ -69,6 +69,7 @@ public class CSSParser2 {
     
     private void parseDeclarationsNormal() {
     	while(!currentToken.getType().equals(CSSTokenType.CLOSE_BRACE) || !currentToken.getType().equals(CSSTokenType.EOF) ) {
+    		System.out.println("currentToken="+currentToken);
     		if(!currentToken.getType().equals(CSSTokenType.CLOSE_BRACE) && !currentToken.getType().equals(CSSTokenType.EOF)) { // for some reason i need that
     		String property = parseProperty();
     		consumeToken(CSSTokenType.COLON);
