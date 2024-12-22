@@ -68,9 +68,9 @@ public class CSSParser2 {
     }
     
     private void parseDeclarationsNormal() {
-    	while(!currentToken.getType().equals(CSSTokenType.CLOSE_BRACE) || !currentToken.getType().equals(CSSTokenType.EOF) ) {
+    	while(!currentToken.getType().equals(CSSTokenType.SEMICOLON) || !currentToken.getType().equals(CSSTokenType.EOF) ) {
     		System.out.println("currentToken="+currentToken);
-    		if(!currentToken.getType().equals(CSSTokenType.CLOSE_BRACE) && !currentToken.getType().equals(CSSTokenType.EOF)) { // for some reason i need that
+    		if(!currentToken.getType().equals(CSSTokenType.SEMICOLON) && !currentToken.getType().equals(CSSTokenType.EOF)) { // for some reason i need that
     		String property = parseProperty();
     		consumeToken(CSSTokenType.COLON);
     		String value = parseValue();
@@ -78,8 +78,9 @@ public class CSSParser2 {
     		// Vérifier si un point-virgule est présent ou si nous sommes à la fin du bloc
             if (currentToken.getType() == CSSTokenType.SEMICOLON) {
                 consumeToken(CSSTokenType.SEMICOLON);  // Consommer ';'
-            } else if (currentToken.getType() != CSSTokenType.CLOSE_BRACE) {
-                throw new RuntimeException("Erreur : Attendu SEMICOLON ou CLOSE_BRACE mais trouvé " + currentToken.getType());
+            } else if (currentToken.getType() != CSSTokenType.SEMICOLON) {
+            	if(currentToken.getType().equals(CSSTokenType.EOF)) break;
+                throw new RuntimeException("Erreur : Attendu SEMICOLON mais trouvé " + currentToken.getType());
             }
             
             this.property.put(property, value);

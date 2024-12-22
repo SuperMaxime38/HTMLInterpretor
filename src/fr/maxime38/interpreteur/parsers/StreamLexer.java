@@ -104,40 +104,56 @@ public class StreamLexer {
     }
 
     private Token handleOpeningTag(String tagName) throws IOException {
-    	
         buffer.setLength(0);
+        boolean inQuotes = false; // Indique si on est dans une chaîne
+        char quoteChar = 0;       // Type de guillemet utilisé (' ou ")
 
-        while (currentChar != -1 && currentChar != '>' && currentChar != '/') {
+        // Lire les attributs ou détecter une balise auto-fermante
+        while (currentChar != -1 && (inQuotes || (currentChar != '>' && currentChar != '/'))) {
+            if (currentChar == '"' || currentChar == '\'') {
+                if (inQuotes) {
+                    if (currentChar == quoteChar) { // Fin de la chaîne
+                        inQuotes = false;
+                    }
+                } else {
+                    inQuotes = true;
+                    quoteChar = (char) currentChar;
+                }
+            }
             buffer.append((char) currentChar);
             consume();
         }
 
         boolean selfClosing = false;
-        if (currentChar == '/') {
-            selfClosing = true;
-            consume();
+        if (currentChar == '/') { // Détecte une balise auto-fermante comme <img />
+            consume(); // Consomme le '/'
+            if (currentChar == '>') { // Vérifie que '>' suit immédiatement
+                selfClosing = true;
+            } else {
+                throw new RuntimeException("Erreur : attendu '>' après '/' dans une balise auto-fermante mais trouvé '" + (char) currentChar + "'");
+            }
         }
 
-        expect('>');
+        expect('>'); // Assure que '>' termine la balise
+
         Token token = new Token(selfClosing ? TokenType.SELF_CLOSING_TAG : TokenType.OPENING_TAG, tagName);
-        
-        // TO HANDLE THE ATTRIBITE DO SOMETHING COMPLICATED
-        
-        String attr = (buffer.length() > 0 ? " " + buffer.toString().trim() : "");
-        
-        String[] attrVal = attr.split("\"");
-        
-        byte counter=0;
-        while(counter<attrVal.length-1) {
-        	token.addAttribute(attrVal[counter].split("=")[0], attrVal[counter+1]);
-        	counter+=2;
+
+        // Analyse des attributs
+        String attributes = buffer.toString().trim();
+        if (!attributes.isEmpty()) {
+            String[] attrPairs = attributes.split("\\s+(?=[a-zA-Z])"); // Sépare par espaces, sauf dans les valeurs
+            for (String pair : attrPairs) {
+                String[] keyValue = pair.split("=", 2);
+                if (keyValue.length == 2) {
+                    String key = keyValue[0].trim();
+                    String value = keyValue[1].replaceAll("^\"|\"$", "").trim(); // Retirer les guillemets
+                    token.addAttribute(key, value);
+                }
+            }
         }
-        
-        
-        //System.out.println("handleOpeningTag(): Generated -> " + token);
+
         return token;
     }
-
 
     
     private String readRawContent(String tagName) throws IOException {

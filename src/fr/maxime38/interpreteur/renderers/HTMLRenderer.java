@@ -4,12 +4,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,8 +24,6 @@ import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.NodeAttribute;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser2;
-import fr.maxime38.interpreteur.parsers.css.CSSToken;
-import fr.maxime38.interpreteur.parsers.css.CSSTokenType;
 
 public class HTMLRenderer {
 	
@@ -82,6 +85,28 @@ public class HTMLRenderer {
 	        lexer = new CSSLexer(node.getStyle());
 	        properties = new CSSParser2(lexer,false).parse();
 	        applyStyle(label);
+	    }else if (node.getTagName().equals("img")) {
+	        String source = getSource(node);
+	        if (source == null || source.isEmpty()) {
+	            System.err.println("Balise <img> sans attribut 'src' ou avec un 'src' vide.");
+	            return;
+	        }
+
+	        BufferedImage myPicture;
+	        try {
+	            @SuppressWarnings("deprecation")
+				URL url = new URL(source); // source contient "https://assistanteplus.fr/wp-content/uploads/2022/04/chat-midjourney.webp"
+	             myPicture = ImageIO.read(url);
+	            if (myPicture == null) {
+	                throw new IOException("Format non pris en charge par ImageIO : " + source);
+	            }
+	            JLabel picture = new JLabel(new ImageIcon(myPicture));
+	            parent.add(picture);
+	        } catch (IOException e) {
+	            System.err.println("Erreur lors du chargement de l'image : " + source);
+	            e.printStackTrace();
+	        }
+
 	    } else {
 	        System.out.println("Unhandled tag: " + node.getTagName());
 	    }
@@ -93,8 +118,17 @@ public class HTMLRenderer {
 		}
 		return false;
 	}
-
-    
+	
+	private static String getSource(Node node) {
+		for(NodeAttribute attribute : node.getAttributes()) {
+			if(attribute.getName().equals("src")) {
+				return attribute.getValue();
+			}
+		}
+		
+		return "";
+	}
+	
     private static void applyStyle(JComponent component) {
         if (properties.containsKey("this")) {
             HashMap<String, String> props = properties.get("this");
