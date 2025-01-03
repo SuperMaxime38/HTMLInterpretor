@@ -5,8 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +19,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import com.idrsolutions.image.JDeli;
 
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.NodeAttribute;
@@ -47,6 +49,7 @@ public class HTMLRenderer {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	private static void traverseDOM(Node node, JComponent parent) {
 		System.out.println("Parcourt: "+node.getTagName());
 	    if (containers.contains(node.getTagName())) {
@@ -94,18 +97,18 @@ public class HTMLRenderer {
 
 	        BufferedImage myPicture;
 	        try {
-	            @SuppressWarnings("deprecation")
-				URL url = new URL(source); // source contient "https://assistanteplus.fr/wp-content/uploads/2022/04/chat-midjourney.webp"
-	             myPicture = ImageIO.read(url);
+	            File inputFile = new File(source);
+	             myPicture = ImageIO.read(inputFile);
 	            if (myPicture == null) {
-	                throw new IOException("Format non pris en charge par ImageIO : " + source);
+	            	myPicture = JDeli.read(inputFile);
+	                //throw new IOException("Format non pris en charge par ImageIO : " + source);
 	            }
 	            JLabel picture = new JLabel(new ImageIcon(myPicture));
 	            parent.add(picture);
-	        } catch (IOException e) {
-	            System.err.println("Erreur lors du chargement de l'image : " + source);
-	            e.printStackTrace();
-	        }
+	        } catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 	    } else {
 	        System.out.println("Unhandled tag: " + node.getTagName());
