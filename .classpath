@@ -6,6 +6,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="D:/librairies/jdeli-trial.jar"/>
+	<classpathentry kind="src" path="libs"/>
+	<classpathentry kind="lib" path="libs/imageio-core-3.9.4.jar"/>
+	<classpathentry kind="lib" path="libs/imageio-metadata-3.9.4.jar"/>
+	<classpathentry kind="lib" path="libs/imageio-webp-3.9.4.jar"/>
+	<classpathentry kind="lib" path="libs/common-io-3.9.4.jar"/>
+	<classpathentry kind="lib" path="libs/common-lang-3.9.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

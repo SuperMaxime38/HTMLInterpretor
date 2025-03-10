@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
-import com.idrsolutions.image.JDeli;
 
 import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.NodeAttribute;
@@ -96,19 +95,24 @@ public class HTMLRenderer {
 	        }
 
 	        BufferedImage myPicture;
-	        try {
-	            File inputFile = new File(source);
-	             myPicture = ImageIO.read(inputFile);
-	            if (myPicture == null) {
-	            	myPicture = JDeli.read(inputFile);
-	                //throw new IOException("Format non pris en charge par ImageIO : " + source);
-	            }
-	            JLabel picture = new JLabel(new ImageIcon(myPicture));
-	            parent.add(picture);
-	        } catch (Exception e) {
+            File inputFile = new File(source);
+            
+
+			try {
+				if(inputFile.exists()) {
+					myPicture = ImageIO.read(inputFile);
+				} else {
+					URL url = new URL(source);
+					myPicture = ImageIO.read(url);
+				}
+				JLabel picture = new JLabel(new ImageIcon(myPicture));
+				parent.add(picture);
+					
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+            
 
 	    } else {
 	        System.out.println("Unhandled tag: " + node.getTagName());

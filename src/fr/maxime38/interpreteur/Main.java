@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,6 +26,10 @@ import fr.maxime38.interpreteur.utils.DOMUtils;
 public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+
+        // Enregistrer les plugins TwelveMonkeys
+        IIORegistry registry = IIORegistry.getDefaultInstance();
+        registry.registerServiceProviders(ServiceRegistry.lookupProviders(ImageReaderSpi.class));
 		
 		try (Reader reader = new FileReader("src/fr/maxime38/interpreteur/test/test.html")) {
 	        StreamLexer lexer = new StreamLexer(reader);
