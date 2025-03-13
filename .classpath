@@ -12,5 +12,11 @@
 	<classpathentry kind="lib" path="libs/imageio-webp-3.9.4.jar"/>
 	<classpathentry kind="lib" path="libs/common-io-3.9.4.jar"/>
 	<classpathentry kind="lib" path="libs/common-lang-3.9.4.jar"/>
+	<classpathentry kind="lib" path="D:/librairies/vlcj-4.10.1/vlcj-4.10.1.jar" sourcepath="D:/librairies/vlcj-4.10.1/vlcj-4.10.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/librairies/vlcj-4.10.1/vlcj-4.10.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/librairies/vlcj-4.10.1/vlcj-natives-4.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

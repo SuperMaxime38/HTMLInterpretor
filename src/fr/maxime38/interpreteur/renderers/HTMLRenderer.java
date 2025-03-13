@@ -7,7 +7,9 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,8 @@ import fr.maxime38.interpreteur.parsers.Node;
 import fr.maxime38.interpreteur.parsers.NodeAttribute;
 import fr.maxime38.interpreteur.parsers.css.CSSLexer;
 import fr.maxime38.interpreteur.parsers.css.CSSParser2;
+import fr.maxime38.interpreteur.utils.MessHandler;
+import fr.maxime38.interpreteur.utils.VideoRenderer;
 
 public class HTMLRenderer {
 	
@@ -94,26 +98,52 @@ public class HTMLRenderer {
 	            return;
 	        }
 
-	        BufferedImage myPicture;
+	        BufferedImage myPicture = null;
             File inputFile = new File(source);
             
-
-			try {
-				if(inputFile.exists()) {
-					myPicture = ImageIO.read(inputFile);
-				} else {
-					URL url = new URL(source);
+            try {
+            	
+            	if(MessHandler.isFile(source)) {
+	            	if(inputFile.exists()) {
+						myPicture = ImageIO.read(inputFile);
+					}
+	            } else {
+					URL url;
+					url = new URL(source);
+					URLConnection uc;
+					uc = url.openConnection();
+					uc.connect();
+					uc = url.openConnection();
+					uc.addRequestProperty("User-Agent", 
+							"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
+					uc.getInputStream();
+				
 					myPicture = ImageIO.read(url);
-				}
-				JLabel picture = new JLabel(new ImageIcon(myPicture));
-				parent.add(picture);
 					
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			    }
+            	
+            	JLabel picture = new JLabel(new ImageIcon(myPicture));
+				parent.add(picture);
+	            	
+	            }  catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             
-
+	    } else if (node.getTagName().equals("video")) {
+	    	System.out.println("Balise <video> called");
+		    
+	    	String source = getSource(node);
+	    	if (source == null || source.isEmpty()) {
+	            System.err.println("Balise <img> sans attribut 'src' ou avec un 'src' vide.");
+	            return;
+	        }
+	    	
+	    	VideoRenderer videoRenderer = new VideoRenderer(source);
+	    	
 	    } else {
 	        System.out.println("Unhandled tag: " + node.getTagName());
 	    }
